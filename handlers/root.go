@@ -29,10 +29,10 @@ func (proxy *HttpProxyHandler) Handler(w http.ResponseWriter, r *http.Request) {
 	}
 	if account == nil {
 		response.RequireAuth(w)
-		log.Info("Fail auth for: ", r.RemoteAddr)
+		log.WithFields(log.Fields{"src": r.RemoteAddr}).Info("Fail auth")
 		return
 	}
-	log.Info("New connection from ", r.RemoteAddr, " to ", r.Host)
+	log.WithFields(log.Fields{"src": r.RemoteAddr, "dst": r.Host}).Info("New connection")
 	if strings.ToLower(r.Method) == "connect" {
 		handleTunnel(w, r)
 	} else {

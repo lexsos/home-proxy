@@ -25,6 +25,6 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	log.Info("Starting HTTPS proxy on", config.ProxyAddr)
+	log.WithFields(log.Fields{"addres": config.ProxyAddr}).Info("Starting HTTPS proxy")
 	log.Fatal(server.ListenAndServe())
 }

@@ -28,7 +28,7 @@ func handleTunnel(w http.ResponseWriter, req *http.Request) {
 	}
 	clientConn, _, err := hijacker.Hijack()
 	if err != nil {
-		log.Warn("Hijack error:", err)
+		log.Warn("Hijack error: ", err)
 		return
 	}
 	defer clientConn.Close()
@@ -36,5 +36,5 @@ func handleTunnel(w http.ResponseWriter, req *http.Request) {
 	// Прокидывать данные между клиентом и сервером (bidirectional copy)
 	go io.Copy(clientConn, destConn)
 	io.Copy(destConn, clientConn)
-	log.Info("Close connection for", req.Host)
+	log.WithFields(log.Fields{"host": req.Host}).Info("Close connection")
 }
