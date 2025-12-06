@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/lexsos/home-proxy/bootstrap"
+
 	log "github.com/sirupsen/logrus"
+
+	"github.com/lexsos/home-proxy/bootstrap"
 )
 
 func main() {

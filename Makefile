@@ -1,2 +1,3 @@
 format:
 	go fmt ./...
+	goimports -w -local "github.com/lexsos/home-proxy" .
