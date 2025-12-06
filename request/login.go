@@ -1,4 +1,4 @@
-package auth
+package request
 
 import (
 	"encoding/base64"
@@ -11,7 +11,7 @@ type LiginPass struct {
 	Password string
 }
 
-func getLoginPass(r *http.Request) *LiginPass {
+func GetLoginPass(r *http.Request) *LiginPass {
 	auth := r.Header.Get("Proxy-Authorization")
 	if auth == "" || !strings.HasPrefix(auth, "Basic ") {
 		return nil

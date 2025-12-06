@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+
+	"github.com/lexsos/home-proxy/request"
 )
 
 type JsonAccount struct {
@@ -37,7 +39,7 @@ func NewJsonHttpAuthenticator(fileName string) (*JsonHttpAuthenticator, error) {
 }
 
 func (jsonAuth *JsonHttpAuthenticator) GetUser(r *http.Request) (*Account, error) {
-	lp := getLoginPass(r)
+	lp := request.GetLoginPass(r)
 	if lp == nil {
 		return nil, nil
 	}

@@ -18,6 +18,11 @@ func main() {
 		log.Fatal(err)
 		return
 	}
+	_, err = bootstrap.InitAuth(config)
+		if err != nil {
+		log.Fatal(err)
+		return
+	}
 	log.Info("Starting HTTPS proxy on", config.ProxyAddr)
 	log.Fatal(server.ListenAndServe())
 }
