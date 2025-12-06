@@ -32,7 +32,7 @@ func (proxy *HttpProxyHandler) Handler(w http.ResponseWriter, r *http.Request) {
 		log.WithFields(log.Fields{"src": r.RemoteAddr}).Info("Fail auth")
 		return
 	}
-	log.WithFields(log.Fields{"src": r.RemoteAddr, "dst": r.Host}).Info("New connection")
+	log.WithFields(log.Fields{"src": r.RemoteAddr, "dst": r.Host, "user": account.Login}).Info("New connection")
 	if strings.ToLower(r.Method) == "connect" {
 		handleTunnel(w, r)
 	} else {

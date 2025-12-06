@@ -39,7 +39,7 @@ func NewJsonHttpAuthenticator(fileName string) (*JsonHttpAuthenticator, error) {
 }
 
 func loginMap(accounts []JsonAccount) map[string]JsonAccount {
-	accountsbyLoginMap := make(map[string]JsonAccount, len(accounts))
+	accountsbyLoginMap := make(map[string]JsonAccount)
 	for _, account := range accounts {
 		accountsbyLoginMap[account.Login] = account
 	}
@@ -47,7 +47,7 @@ func loginMap(accounts []JsonAccount) map[string]JsonAccount {
 }
 
 func ipMap(accounts []JsonAccount) map[string]JsonAccount {
-	accountsbyIpMap := make(map[string]JsonAccount, len(accounts))
+	accountsbyIpMap := make(map[string]JsonAccount)
 	for _, account := range accounts {
 		for _, ip := range account.Ips {
 			accountsbyIpMap[ip] = account
@@ -57,20 +57,44 @@ func ipMap(accounts []JsonAccount) map[string]JsonAccount {
 }
 
 func (jsonAuth *JsonHttpAuthenticator) GetUser(r *http.Request) (*Account, error) {
+	account := jsonAuth.authByLogin(r)
+	if account != nil {
+		return account, nil
+	}
+	return jsonAuth.authByIp(r), nil
+}
+
+func (jsonAuth *JsonHttpAuthenticator) authByLogin(r *http.Request) *Account {
 	lp := request.GetLoginPass(r)
 	if lp == nil {
-		return nil, nil
+		return nil
 	}
 	account, ok := jsonAuth.accountsByLogin[lp.Login]
 	if !ok {
-		return nil, nil
+		return nil
 	}
 	if account.Password != nil && *account.Password != lp.Password {
-		return nil, nil
+		return nil
 	}
 	return &Account{
 		Id:    account.Id,
 		Login: account.Login,
 		Role:  account.Role,
-	}, nil
+	}
+}
+
+func (jsonAuth *JsonHttpAuthenticator) authByIp(r *http.Request) *Account {
+	ip := request.GetIpAddress(r)
+	if ip == "" {
+		return nil
+	}
+	account, ok := jsonAuth.accountsByIp[ip]
+	if !ok {
+		return nil
+	}
+	return &Account{
+		Id:    account.Id,
+		Login: account.Login,
+		Role:  account.Role,
+	}
 }
