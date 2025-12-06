@@ -14,6 +14,7 @@ func main() {
 		log.Fatal(err)
 		return
 	}
+	bootstrap.InitLog(config)
 	fmt.Println("Hello, world!")
 	fmt.Println(config)
 }
