@@ -4,6 +4,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/lexsos/home-proxy/bootstrap"
+	"github.com/lexsos/home-proxy/handlers"
 )
 
 func main() {
@@ -13,13 +14,14 @@ func main() {
 		return
 	}
 	bootstrap.InitLog(config)
-	server, err := bootstrap.NewHttpProxy(config)
+	authenticator, err := bootstrap.InitAuth(config)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
-	_, err = bootstrap.InitAuth(config)
-		if err != nil {
+	httPproxyHandler := handlers.NewProxyHandler(authenticator)
+	server, err := bootstrap.InitHttpServer(config, httPproxyHandler)
+	if err != nil {
 		log.Fatal(err)
 		return
 	}
