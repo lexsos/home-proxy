@@ -10,11 +10,14 @@ import (
 )
 
 type JsonAccount struct {
-	Id       int64    `json:"id"`
-	Login    string   `json:"login"`
-	Role     string   `json:"role"`
-	Password *string  `json:"password"`
-	Ips      []string `json:"ips"`
+	Login       string   `json:"login"`
+	Password    *string  `json:"password"`
+	Ips         []string `json:"ips"`
+	ProfileSlug string   `json:"profile"`
+}
+
+type JsonAccounts struct {
+	Accounts []JsonAccount `json:"accounts"`
 }
 
 type JsonHttpAuthenticator struct {
@@ -27,14 +30,14 @@ func NewJsonHttpAuthenticator(fileName string) (*JsonHttpAuthenticator, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file %s: %w", fileName, err)
 	}
-	var accounts []JsonAccount
+	var accounts JsonAccounts
 	if err := json.Unmarshal(data, &accounts); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal JSON: %w", err)
 	}
 
 	return &JsonHttpAuthenticator{
-		accountsByLogin: loginMap(accounts),
-		accountsByIp:    ipMap(accounts),
+		accountsByLogin: loginMap(accounts.Accounts),
+		accountsByIp:    ipMap(accounts.Accounts),
 	}, nil
 }
 
@@ -77,9 +80,8 @@ func (jsonAuth *JsonHttpAuthenticator) authByLogin(r *http.Request) *Account {
 		return nil
 	}
 	return &Account{
-		Id:    account.Id,
-		Login: account.Login,
-		Role:  account.Role,
+		Login:       account.Login,
+		ProfileSlug: account.ProfileSlug,
 	}
 }
 
@@ -93,8 +95,7 @@ func (jsonAuth *JsonHttpAuthenticator) authByIp(r *http.Request) *Account {
 		return nil
 	}
 	return &Account{
-		Id:    account.Id,
-		Login: account.Login,
-		Role:  account.Role,
+		Login:       account.Login,
+		ProfileSlug: account.ProfileSlug,
 	}
 }

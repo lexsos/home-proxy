@@ -5,9 +5,8 @@ import (
 )
 
 type Account struct {
-	Id    int64
-	Login string
-	Role  string
+	Login       string
+	ProfileSlug string
 }
 
 type HttpAuthenticator interface {
