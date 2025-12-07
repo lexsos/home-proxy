@@ -1,4 +1,4 @@
-package domains
+package json
 
 type jsonDomain struct {
 	Dns  string    `json:"dns"`
@@ -14,6 +14,6 @@ type jsonConfig struct {
 	DomainsSets []jsonDomainSet `json:"domains_sets"`
 }
 
-func NewDomainSetRepositoryFromJson(fileName string) (*DomainSetRepository, error) {
+func NewDomainSetRepository(fileName string) (*DomainSetRepository, error) {
 	return &DomainSetRepository{}, nil
 }

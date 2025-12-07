@@ -1,4 +1,4 @@
-package domains
+package json
 
 type MatchType string
 
