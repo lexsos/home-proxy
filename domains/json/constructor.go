@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 )
 
 type jsonDomain struct {
@@ -41,7 +42,7 @@ func NewDomainSetRepository(fileName string) (*DomainSetRepository, error) {
 
 		for _, domain := range domainSet.Domains {
 			domainsMap[domain.Dns] = Domain{
-				Dns:  domain.Dns,
+				Dns:  strings.ToLower(domain.Dns),
 				Type: domain.Type,
 			}
 		}
