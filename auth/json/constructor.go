@@ -6,17 +6,6 @@ import (
 	"os"
 )
 
-type JsonAccount struct {
-	Login       string   `json:"login"`
-	Password    *string  `json:"password"`
-	Ips         []string `json:"ips"`
-	ProfileSlug string   `json:"profile"`
-}
-
-type JsonAccounts struct {
-	Accounts []JsonAccount `json:"accounts"`
-}
-
 func NewJsonHttpAuthenticator(fileName string) (*JsonHttpAuthenticator, error) {
 	data, err := os.ReadFile(fileName)
 	if err != nil {
