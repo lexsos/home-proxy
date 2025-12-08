@@ -23,6 +23,6 @@ func prepareDomain(domain string) *parsedDomain {
 	}
 }
 
-func (repo *DomainSetRepository) Match(domain string, sets []string) bool {
-	return false
+func (repo *DomainSetRepository) Match(domain string, sets []string) (bool, error) {
+	return false, nil
 }

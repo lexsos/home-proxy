@@ -11,5 +11,5 @@ clear:
 build_dir:
 	mkdir build
 
-build_linux64: build_dir
+build_linux64: clear build_dir
 	GOOS=linux GOARCH=amd64 go build -o ./build/hproxy

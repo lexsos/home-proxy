@@ -1,12 +1,9 @@
-package auth
+package json
 
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"os"
-
-	"github.com/lexsos/home-proxy/request"
 )
 
 type JsonAccount struct {
@@ -18,11 +15,6 @@ type JsonAccount struct {
 
 type JsonAccounts struct {
 	Accounts []JsonAccount `json:"accounts"`
-}
-
-type JsonHttpAuthenticator struct {
-	accountsByLogin map[string]JsonAccount
-	accountsByIp    map[string]JsonAccount
 }
 
 func NewJsonHttpAuthenticator(fileName string) (*JsonHttpAuthenticator, error) {
@@ -57,45 +49,4 @@ func ipMap(accounts []JsonAccount) map[string]JsonAccount {
 		}
 	}
 	return accountsbyIpMap
-}
-
-func (jsonAuth *JsonHttpAuthenticator) GetUser(r *http.Request) (*Account, error) {
-	account := jsonAuth.authByLogin(r)
-	if account != nil {
-		return account, nil
-	}
-	return jsonAuth.authByIp(r), nil
-}
-
-func (jsonAuth *JsonHttpAuthenticator) authByLogin(r *http.Request) *Account {
-	lp := request.GetLoginPass(r)
-	if lp == nil {
-		return nil
-	}
-	account, ok := jsonAuth.accountsByLogin[lp.Login]
-	if !ok {
-		return nil
-	}
-	if account.Password != nil && *account.Password != lp.Password {
-		return nil
-	}
-	return &Account{
-		Login:       account.Login,
-		ProfileSlug: account.ProfileSlug,
-	}
-}
-
-func (jsonAuth *JsonHttpAuthenticator) authByIp(r *http.Request) *Account {
-	ip := request.GetIpAddress(r)
-	if ip == "" {
-		return nil
-	}
-	account, ok := jsonAuth.accountsByIp[ip]
-	if !ok {
-		return nil
-	}
-	return &Account{
-		Login:       account.Login,
-		ProfileSlug: account.ProfileSlug,
-	}
 }
