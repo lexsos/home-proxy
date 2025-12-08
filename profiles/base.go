@@ -1,5 +1,17 @@
 package profiles
 
-type ProfilesFilter interface {
-	IsAllow(slug string, domain string) (bool, error)
+type ProfilePolicy string
+
+const (
+	Allow  = "allow"
+	Strict = "strict"
+)
+
+type ProfileConfig struct {
+	Policy      ProfilePolicy
+	DomainsSets []string
+}
+
+type ProfilesRepository interface {
+	GetProfile(slug string) (*ProfileConfig, error)
 }
