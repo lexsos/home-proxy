@@ -1,4 +1,4 @@
-package json
+package inmemory
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 	"github.com/lexsos/home-proxy/request"
 )
 
-func (jsonAuth *JsonHttpAuthenticator) GetUser(r *http.Request) (*auth.Account, error) {
+func (jsonAuth *HttpAuthenticator) GetUser(r *http.Request) (*auth.Account, error) {
 	account := jsonAuth.authByLogin(r)
 	if account != nil {
 		return account, nil
@@ -15,7 +15,7 @@ func (jsonAuth *JsonHttpAuthenticator) GetUser(r *http.Request) (*auth.Account, 
 	return jsonAuth.authByIp(r), nil
 }
 
-func (jsonAuth *JsonHttpAuthenticator) authByLogin(r *http.Request) *auth.Account {
+func (jsonAuth *HttpAuthenticator) authByLogin(r *http.Request) *auth.Account {
 	lp := request.GetLoginPass(r)
 	if lp == nil {
 		return nil
@@ -33,7 +33,7 @@ func (jsonAuth *JsonHttpAuthenticator) authByLogin(r *http.Request) *auth.Accoun
 	}
 }
 
-func (jsonAuth *JsonHttpAuthenticator) authByIp(r *http.Request) *auth.Account {
+func (jsonAuth *HttpAuthenticator) authByIp(r *http.Request) *auth.Account {
 	ip := request.GetIpAddress(r)
 	if ip == "" {
 		return nil
