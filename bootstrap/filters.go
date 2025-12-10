@@ -30,7 +30,7 @@ func InitFilter(config *Config) (*filters.RequestFilter, error) {
 		return nil, err
 	}
 	profileRepo, err := InitProfileRepository(config)
-		if err != nil {
+	if err != nil {
 		return nil, err
 	}
 	return filters.NewRequestFilter(profileRepo, domains), nil
