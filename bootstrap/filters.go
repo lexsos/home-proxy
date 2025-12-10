@@ -5,6 +5,7 @@ import (
 
 	"github.com/lexsos/home-proxy/domains"
 	domainsInmemory "github.com/lexsos/home-proxy/domains/inmemory"
+	"github.com/lexsos/home-proxy/profiles"
 	profilesInmemory "github.com/lexsos/home-proxy/profiles/inmemory"
 )
 
@@ -15,7 +16,7 @@ func InitDomainMatcher(config *Config) (domains.DomainMatcher, error) {
 	return nil, fmt.Errorf("No filters config")
 }
 
-func InitProfileRepository(config *Config) (*profilesInmemory.InMemoryProfilesRepository, error) {
+func InitProfileRepository(config *Config) (profiles.ProfilesRepository, error) {
 	if config.JsonAuth != "" {
 		return profilesInmemory.NewProfilesRepositoryFronJson(config.JsonAuth)
 	}
