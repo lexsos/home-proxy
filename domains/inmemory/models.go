@@ -1,4 +1,4 @@
-package json
+package inmemory
 
 type MatchType string
 

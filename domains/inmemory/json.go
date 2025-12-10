@@ -1,4 +1,4 @@
-package json
+package inmemory
 
 import (
 	"encoding/json"
@@ -21,7 +21,7 @@ type jsonConfig struct {
 	DomainsSets []jsonDomainSet `json:"domains_sets"`
 }
 
-func NewDomainSetRepository(fileName string) (*DomainSetRepository, error) {
+func NewDomainSetRepositoryFromJson(fileName string) (*DomainSetRepository, error) {
 	// Read the file
 	data, err := os.ReadFile(fileName)
 	if err != nil {
