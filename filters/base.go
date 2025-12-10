@@ -24,11 +24,12 @@ func (filter *RequestFilter) HasAccess(profileSlug string, domain string) (bool,
 	if err != nil {
 		return false, err
 	}
-	if cfg.Policy == profiles.Allow {
+	switch cfg.Policy {
+	case profiles.Allow:
 		return true, nil
-	}
-	if cfg.Policy == profiles.Strict {
+	case profiles.Strict:
 		return filter.domainMatcher.Match(domain, cfg.DomainsSets)
+	default:
+		return false, fmt.Errorf("Unknown policy '%s' for profile '%s'", cfg.Policy, profileSlug)
 	}
-	return false, fmt.Errorf("Unknown policy '%s' for profile '%s'", cfg.Policy, profileSlug)
 }
