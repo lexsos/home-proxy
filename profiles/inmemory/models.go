@@ -7,9 +7,10 @@ import (
 )
 
 type TimeRange struct {
-	policy  profiles.ProfilePolicy
-	startAt profiles.DayTime
-	endAt   profiles.DayTime
+	policy      profiles.ProfilePolicy
+	domainsSets []string
+	startAt     profiles.DayTime
+	endAt       profiles.DayTime
 }
 
 type Profile struct {
