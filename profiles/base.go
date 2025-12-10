@@ -3,8 +3,8 @@ package profiles
 type ProfilePolicy string
 
 const (
-	Allow  = "allow"
-	Strict = "strict"
+	Allow  ProfilePolicy = "allow"
+	Strict ProfilePolicy = "strict"
 )
 
 type ProfileConfig struct {

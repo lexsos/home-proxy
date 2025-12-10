@@ -1,0 +1,23 @@
+package inmemory
+
+import (
+	"time"
+
+	"github.com/lexsos/home-proxy/profiles"
+)
+
+type TimeRange struct {
+	policy  profiles.ProfilePolicy
+	startAt profiles.DayTime
+	endAt   profiles.DayTime
+}
+
+type Profile struct {
+	slug       string
+	tz         *time.Location
+	timeRanges []TimeRange
+}
+
+type InMemoryProfilesRepository struct {
+	profiles map[string]Profile
+}
