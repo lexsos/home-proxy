@@ -25,6 +25,8 @@ func main() {
 	}
 	domains, err := bootstrap.InitDomainMatcher(config)
 	log.Print(domains, err)
+	profile, err := bootstrap.InitProfileRepository(config)
+	log.Print(profile, err)
 	log.WithFields(log.Fields{"addres": config.ProxyAddr}).Info("Starting HTTPS proxy")
 	log.Fatal(server.ListenAndServe())
 }
