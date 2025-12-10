@@ -1,24 +1,85 @@
 package inmemory
 
-import "github.com/lexsos/home-proxy/profiles"
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+	"time"
+
+	"github.com/lexsos/home-proxy/profiles"
+)
 
 type jsonTimeRange struct {
-	policy      profiles.ProfilePolicy `json:"accounts"`
-	domainsSets []string               `json:"domains_sets"`
-	startAt     string                 `json:"start_at"`
-	endAt       string                 `json:"end_at"`
+	Policy      profiles.ProfilePolicy `json:"policy"`
+	DomainsSets []string               `json:"domains_sets"`
+	StartAt     string                 `json:"start_at"`
+	EndAt       string                 `json:"end_at"`
 }
 
 type jsonProfile struct {
-	slug   string          `json:"slug"`
-	tz     string          `json:"tz"`
-	ranges []jsonTimeRange `json:"ranges"`
+	Slug   string          `json:"slug"`
+	Tz     string          `json:"tz"`
+	Ranges []jsonTimeRange `json:"ranges"`
 }
 
-type jsonProfilesList struct {
-	profiles []jsonProfile `json:"profiles"`
+type jsonConfig struct {
+	Profiles []jsonProfile `json:"profiles"`
 }
 
 func NewProfilesRepositoryFronJson(fileName string) (*InMemoryProfilesRepository, error) {
-	return nil, nil
+	// Read the file
+	data, err := os.ReadFile(fileName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read config file: %w", err)
+	}
+
+	// Parse JSON
+	var config jsonConfig
+	if err := json.Unmarshal(data, &config); err != nil {
+		return nil, fmt.Errorf("failed to parse config file: %w", err)
+	}
+
+	// Build the repository
+	profilesMap := make(map[string]Profile)
+
+	for _, jsonProf := range config.Profiles {
+		// Parse timezone
+		tz, err := time.LoadLocation(jsonProf.Tz)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse timezone '%s' for profile '%s': %w", jsonProf.Tz, jsonProf.Slug, err)
+		}
+
+		// Parse time ranges
+		var timeRanges []TimeRange
+		for i, jsonRange := range jsonProf.Ranges {
+			// Parse start time
+			startAt, err := profiles.ParseTime(jsonRange.StartAt)
+			if err != nil {
+				return nil, fmt.Errorf("failed to parse start_at '%s' for profile '%s' range %d: %w", jsonRange.StartAt, jsonProf.Slug, i, err)
+			}
+
+			// Parse end time
+			endAt, err := profiles.ParseTime(jsonRange.EndAt)
+			if err != nil {
+				return nil, fmt.Errorf("failed to parse end_at '%s' for profile '%s' range %d: %w", jsonRange.EndAt, jsonProf.Slug, i, err)
+			}
+
+			timeRanges = append(timeRanges, TimeRange{
+				policy:      jsonRange.Policy,
+				domainsSets: jsonRange.DomainsSets,
+				startAt:     startAt,
+				endAt:       endAt,
+			})
+		}
+
+		profilesMap[jsonProf.Slug] = Profile{
+			slug:       jsonProf.Slug,
+			tz:         tz,
+			timeRanges: timeRanges,
+		}
+	}
+
+	return &InMemoryProfilesRepository{
+		profiles: profilesMap,
+	}, nil
 }
