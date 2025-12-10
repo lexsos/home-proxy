@@ -23,12 +23,12 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	domains, err := bootstrap.InitDomainMatcher(config)
-	log.Print(domains, err)
-	profileRepo, err := bootstrap.InitProfileRepository(config)
-	log.Print(profileRepo, err)
-	profileCfg, err := profileRepo.GetProfile("children")
-	log.Print(profileCfg, err)
+	filter, err := bootstrap.InitFilter(config)
+	log.Print(err)
+	log.Print(filter.HasAccess("admin", "api.yandex.ru"))
+	log.Print(filter.HasAccess("admin", "youtube.com"))
+	log.Print(filter.HasAccess("children", "api.yandex.ru"))
+	log.Print(filter.HasAccess("children", "youtube.com"))
 	log.WithFields(log.Fields{"addres": config.ProxyAddr}).Info("Starting HTTPS proxy")
 	log.Fatal(server.ListenAndServe())
 }
