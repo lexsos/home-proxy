@@ -7,16 +7,19 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/lexsos/home-proxy/auth"
+	"github.com/lexsos/home-proxy/filters"
 	"github.com/lexsos/home-proxy/response"
 )
 
 type HttpProxyHandler struct {
 	authenticator auth.HttpAuthenticator
+	reqFilter     *filters.RequestFilter
 }
 
-func NewProxyHandler(authenticator auth.HttpAuthenticator) *HttpProxyHandler {
+func NewProxyHandler(authenticator auth.HttpAuthenticator, reqFilter *filters.RequestFilter) *HttpProxyHandler {
 	return &HttpProxyHandler{
 		authenticator: authenticator,
+		reqFilter:     reqFilter,
 	}
 }
 

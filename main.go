@@ -18,17 +18,16 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	server, err := bootstrap.InitHttpServer(config, authenticator)
+	filter, err := bootstrap.InitFilter(config)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
-	filter, err := bootstrap.InitFilter(config)
-	log.Print(err)
-	log.Print(filter.HasAccess("admin", "api.yandex.ru"))
-	log.Print(filter.HasAccess("admin", "youtube.com"))
-	log.Print(filter.HasAccess("children", "api.yandex.ru"))
-	log.Print(filter.HasAccess("children", "youtube.com"))
+	server, err := bootstrap.InitHttpServer(config, authenticator, filter)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 	log.WithFields(log.Fields{"addres": config.ProxyAddr}).Info("Starting HTTPS proxy")
 	log.Fatal(server.ListenAndServe())
 }
