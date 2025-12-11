@@ -26,7 +26,7 @@ func NewProxyHandler(authenticator auth.HttpAuthenticator, reqFilter *filters.Re
 func (proxy *HttpProxyHandler) Handler(w http.ResponseWriter, r *http.Request) {
 	account, err := proxy.authenticator.GetUser(r)
 	if err != nil {
-		log.Warn("Auth fail: ", err)
+		log.Warn("auth fail: ", err)
 		response.RequireAuth(w)
 		return
 	}

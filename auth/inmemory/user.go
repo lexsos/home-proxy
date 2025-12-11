@@ -34,7 +34,7 @@ func (jsonAuth *HttpAuthenticator) authByLogin(r *http.Request) *auth.Account {
 }
 
 func (jsonAuth *HttpAuthenticator) authByIp(r *http.Request) *auth.Account {
-	ip := request.GetIpAddress(r)
+	ip := request.GetClientIpAddress(r)
 	if ip == "" {
 		return nil
 	}
