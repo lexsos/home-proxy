@@ -11,6 +11,7 @@ type TimeRange struct {
 	domainsSets []string
 	startAt     profiles.DayTime
 	endAt       profiles.DayTime
+	weekDays    map[time.Weekday]struct{}
 }
 
 type Profile struct {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/lexsos/home-proxy/profiles"
@@ -14,6 +15,7 @@ type jsonTimeRange struct {
 	DomainsSets []string               `json:"domains_sets"`
 	StartAt     string                 `json:"start_at"`
 	EndAt       string                 `json:"end_at"`
+	WeekDays    []string               `json:"week_days"`
 }
 
 type jsonProfile struct {
@@ -24,6 +26,16 @@ type jsonProfile struct {
 
 type jsonConfig struct {
 	Profiles []jsonProfile `json:"profiles"`
+}
+
+var WeekDaysMap = map[string]time.Weekday{
+	"san": time.Sunday,
+	"mon": time.Monday,
+	"tue": time.Tuesday,
+	"wed": time.Wednesday,
+	"thu": time.Thursday,
+	"fri": time.Friday,
+	"sat": time.Saturday,
 }
 
 func NewProfilesRepositoryFronJson(fileName string) (*InMemoryProfilesRepository, error) {
@@ -64,11 +76,22 @@ func NewProfilesRepositoryFronJson(fileName string) (*InMemoryProfilesRepository
 				return nil, fmt.Errorf("failed to parse end_at '%s' for profile '%s' range %d: %w", jsonRange.EndAt, jsonProf.Slug, i, err)
 			}
 
+			// Parse week days
+			weekDays := make(map[time.Weekday]struct{}, len(jsonRange.WeekDays))
+			for _, day := range jsonRange.WeekDays {
+				dayOfWeek, ok := WeekDaysMap[strings.ToLower(day)]
+				if !ok {
+					return nil, fmt.Errorf("fail to parse day of week '%s' for profile '%s' range %d", day, jsonProf.Slug, i)
+				}
+				weekDays[dayOfWeek] = struct{}{}
+			}
+
 			timeRanges = append(timeRanges, TimeRange{
 				policy:      jsonRange.Policy,
 				domainsSets: jsonRange.DomainsSets,
 				startAt:     startAt,
 				endAt:       endAt,
+				weekDays:    weekDays,
 			})
 		}
 
