@@ -11,14 +11,25 @@ func (repo *InMemoryProfilesRepository) GetProfile(slug string) (*profiles.Profi
 	if !ok {
 		return nil, fmt.Errorf("Profile '%s' not found", slug)
 	}
-	currentTime := profiles.NowTimeInLocation(profile.tz)
+	current := profiles.NowTimeInLocation(profile.tz)
 	for _, timeRange := range profile.timeRanges {
-		if (currentTime >= timeRange.startAt) && (currentTime <= timeRange.endAt) {
-			return &profiles.ProfileConfig{
-				Policy:      timeRange.policy,
-				DomainsSets: timeRange.domainsSets,
-			}, nil
+		// Too early
+		if current.Time < timeRange.startAt {
+			continue
 		}
+		// Too late
+		if timeRange.endAt < current.Time {
+			continue
+		}
+		// Improper day of week
+		if _, ok := timeRange.weekDays[current.Day]; !ok && len(timeRange.weekDays) > 0 {
+			continue
+		}
+		return &profiles.ProfileConfig{
+			Policy:      timeRange.policy,
+			DomainsSets: timeRange.domainsSets,
+		}, nil
+
 	}
 	return nil, fmt.Errorf("Time range not found in profile '%s'", slug)
 }
