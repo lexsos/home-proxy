@@ -1,6 +1,7 @@
 package profiles
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -17,7 +18,7 @@ func SecondsSinceMidnight(t time.Time) DayTime {
 func ParseTime(strTime string) (DayTime, error) {
 	start, err := time.Parse(timeLayout, strTime)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("fail parse '%s' as time: %w", strTime, err)
 	}
 	return SecondsSinceMidnight(start), nil
 }

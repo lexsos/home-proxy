@@ -12,14 +12,22 @@ import (
 
 func InitDomainMatcher(config *Config) (domains.DomainMatcher, error) {
 	if config.JsonAuth != "" {
-		return domainsInmemory.NewDomainSetRepositoryFromJson(config.JsonAuth)
+		domains, err := domainsInmemory.NewDomainSetRepositoryFromJson(config.JsonAuth)
+		if err != nil {
+			return nil, fmt.Errorf("failed to bootstrap domains from json: %w", err)
+		}
+		return domains, nil
 	}
 	return nil, fmt.Errorf("No filters config")
 }
 
 func InitProfileRepository(config *Config) (profiles.ProfilesRepository, error) {
 	if config.JsonAuth != "" {
-		return profilesInmemory.NewProfilesRepositoryFronJson(config.JsonAuth)
+		profiles, err := profilesInmemory.NewProfilesRepositoryFronJson(config.JsonAuth)
+		if err != nil {
+			return nil, fmt.Errorf("failed to bootstrap profiles from json: %w", err)
+		}
+		return profiles, nil
 	}
 	return nil, fmt.Errorf("No filters config")
 }

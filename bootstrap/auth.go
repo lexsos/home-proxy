@@ -9,7 +9,11 @@ import (
 
 func InitAuth(config *Config) (auth.HttpAuthenticator, error) {
 	if config.JsonAuth != "" {
-		return inmemory.NewHttpAuthenticatorFromJson(config.JsonAuth)
+		auth, err := inmemory.NewHttpAuthenticatorFromJson(config.JsonAuth)
+		if err != nil {
+			return nil, fmt.Errorf("failed to bootstrap authenticator from json: %w", err)
+		}
+		return auth, nil
 	}
 	return nil, fmt.Errorf("No auth config")
 }

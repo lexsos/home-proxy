@@ -22,13 +22,17 @@ func NewRequestFilter(profilesRepo profiles.ProfilesRepository, domainMatcher do
 func (filter *RequestFilter) HasAccess(profileSlug string, domain string) (bool, error) {
 	cfg, err := filter.profilesRepo.GetProfile(profileSlug)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("fail extract profile cfg: %w", err)
 	}
 	switch cfg.Policy {
 	case profiles.Allow:
 		return true, nil
 	case profiles.Strict:
-		return filter.domainMatcher.Match(domain, cfg.DomainsSets)
+		isMatch, err := filter.domainMatcher.Match(domain, cfg.DomainsSets)
+		if err != nil {
+			return false, fmt.Errorf("fail match domain '%s': %w", domain, err)
+		}
+		return isMatch, nil
 	default:
 		return false, fmt.Errorf("Unknown policy '%s' for profile '%s'", cfg.Policy, profileSlug)
 	}
