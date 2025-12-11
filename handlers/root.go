@@ -25,32 +25,34 @@ func NewProxyHandler(authenticator auth.HttpAuthenticator, reqFilter *filters.Re
 }
 
 func (proxy *HttpProxyHandler) Handler(w http.ResponseWriter, r *http.Request) {
+	logger := log.WithFields(log.Fields{"src": r.RemoteAddr, "dst": r.Host})
 	account, err := proxy.authenticator.GetUser(r)
 	if err != nil {
-		log.Warn("auth fail: ", err)
+		logger.Warn("auth fail: ", err)
 		response.RequireAuth(w)
 		return
 	}
 	if account == nil {
 		response.RequireAuth(w)
-		log.WithFields(log.Fields{"src": r.RemoteAddr}).Info("Fail auth")
+		logger.Info("Fail auth")
 		return
 	}
+	logger = logger.WithField("user", account.Login)
 
 	dstDomain := request.GetDstDomain(r)
 	allow, err := proxy.reqFilter.HasAccess(account.ProfileSlug, dstDomain)
 	if err != nil {
-		log.WithFields(log.Fields{"src": r.RemoteAddr, "dst": r.Host, "user": account.Login}).Error("Filters fail:", err)
+		logger.Error("Filters fail:", err)
 		response.InternalError(w)
 		return
 	}
 	if !allow {
 		response.DomainForbidden(w, dstDomain)
-		log.WithFields(log.Fields{"src": r.RemoteAddr, "dst": r.Host, "user": account.Login}).Info("Deny access")
+		logger.Info("Deny access")
 		return
 	}
 
-	log.WithFields(log.Fields{"src": r.RemoteAddr, "dst": r.Host, "user": account.Login}).Info("New connection")
+	logger.Info("New connection")
 	if strings.ToLower(r.Method) == "connect" {
 		handleTunnel(w, r)
 	} else {
