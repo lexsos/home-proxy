@@ -3,6 +3,8 @@ package bootstrap
 import (
 	"fmt"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/lexsos/home-proxy/domains"
 	domainsInmemory "github.com/lexsos/home-proxy/domains/inmemory"
 	"github.com/lexsos/home-proxy/filters"
@@ -11,6 +13,7 @@ import (
 )
 
 func InitDomainMatcher(config *Config) (domains.DomainMatcher, error) {
+	log.Info("Loading domains")
 	if config.JsonAuth != "" {
 		domains, err := domainsInmemory.NewDomainSetRepositoryFromJson(config.JsonAuth)
 		if err != nil {
@@ -22,6 +25,7 @@ func InitDomainMatcher(config *Config) (domains.DomainMatcher, error) {
 }
 
 func InitProfileRepository(config *Config) (profiles.ProfilesRepository, error) {
+	log.Info("Loading profiles")
 	if config.JsonAuth != "" {
 		profiles, err := profilesInmemory.NewProfilesRepositoryFronJson(config.JsonAuth)
 		if err != nil {

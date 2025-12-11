@@ -21,4 +21,5 @@ func InitLog(config *Config) {
 	case "fatal":
 		log.SetLevel(log.FatalLevel)
 	}
+	log.Info("Init logs")
 }

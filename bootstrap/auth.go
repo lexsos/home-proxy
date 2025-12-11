@@ -3,11 +3,14 @@ package bootstrap
 import (
 	"fmt"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/lexsos/home-proxy/auth"
 	"github.com/lexsos/home-proxy/auth/inmemory"
 )
 
 func InitAuth(config *Config) (auth.HttpAuthenticator, error) {
+	log.Info("Creating authenticator")
 	if config.JsonAuth != "" {
 		auth, err := inmemory.NewHttpAuthenticatorFromJson(config.JsonAuth)
 		if err != nil {
