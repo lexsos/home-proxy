@@ -26,7 +26,8 @@ func NewProxyHandler(authenticator auth.HttpAuthenticator, reqFilter *filters.Re
 }
 
 func (proxy *HttpProxyHandler) Handler(w http.ResponseWriter, r *http.Request) {
-	ctx, logger := logging.WithFields(r.Context(), log.Fields{"src": r.RemoteAddr, "dst": r.Host})
+	reqId := request.GetOrGenId(r)
+	ctx, logger := logging.WithFields(r.Context(), log.Fields{"src": r.RemoteAddr, "dst": r.Host, "reqId": reqId})
 	account, err := proxy.authenticator.GetUser(ctx, r)
 	if err != nil {
 		logger.Warn("auth fail: ", err)
