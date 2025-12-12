@@ -39,10 +39,10 @@ func (proxy *HttpProxyHandler) Handler(w http.ResponseWriter, r *http.Request) {
 		logger.Info("Fail auth")
 		return
 	}
-	_, logger = logging.WithField(ctx, "user", account.Login)
+	ctx, logger = logging.WithField(ctx, "user", account.Login)
 
 	dstDomain := request.GetDstDomain(r)
-	allow, err := proxy.reqFilter.HasAccess(account.ProfileSlug, dstDomain)
+	allow, err := proxy.reqFilter.HasAccess(ctx, account.ProfileSlug, dstDomain)
 	if err != nil {
 		logger.Error("Filters fail:", err)
 		response.InternalError(w)
