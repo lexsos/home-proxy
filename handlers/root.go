@@ -8,6 +8,7 @@ import (
 
 	"github.com/lexsos/home-proxy/auth"
 	"github.com/lexsos/home-proxy/filters"
+	"github.com/lexsos/home-proxy/logging"
 	"github.com/lexsos/home-proxy/request"
 	"github.com/lexsos/home-proxy/response"
 )
@@ -25,7 +26,7 @@ func NewProxyHandler(authenticator auth.HttpAuthenticator, reqFilter *filters.Re
 }
 
 func (proxy *HttpProxyHandler) Handler(w http.ResponseWriter, r *http.Request) {
-	logger := log.WithFields(log.Fields{"src": r.RemoteAddr, "dst": r.Host})
+	ctx, logger := logging.WithFields(r.Context(), log.Fields{"src": r.RemoteAddr, "dst": r.Host})
 	account, err := proxy.authenticator.GetUser(r)
 	if err != nil {
 		logger.Warn("auth fail: ", err)
@@ -37,7 +38,7 @@ func (proxy *HttpProxyHandler) Handler(w http.ResponseWriter, r *http.Request) {
 		logger.Info("Fail auth")
 		return
 	}
-	logger = logger.WithField("user", account.Login)
+	_, logger = logging.WithField(ctx, "user", account.Login)
 
 	dstDomain := request.GetDstDomain(r)
 	allow, err := proxy.reqFilter.HasAccess(account.ProfileSlug, dstDomain)
