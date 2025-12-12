@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"net/http"
 )
 
@@ -10,5 +11,5 @@ type Account struct {
 }
 
 type HttpAuthenticator interface {
-	GetUser(r *http.Request) (*Account, error)
+	GetUser(ctx context.Context, r *http.Request) (*Account, error)
 }
