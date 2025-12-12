@@ -1,5 +1,7 @@
 package profiles
 
+import "context"
+
 type ProfilePolicy string
 
 const (
@@ -13,5 +15,5 @@ type ProfileConfig struct {
 }
 
 type ProfilesRepository interface {
-	GetProfile(slug string) (*ProfileConfig, error)
+	GetProfile(ctx context.Context, slug string) (*ProfileConfig, error)
 }

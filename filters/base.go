@@ -23,7 +23,7 @@ func NewRequestFilter(profilesRepo profiles.ProfilesRepository, domainMatcher do
 
 func (filter *RequestFilter) HasAccess(ctx context.Context, profileSlug string, domain string) (bool, error) {
 	logger := logging.LogFromContext(ctx)
-	cfg, err := filter.profilesRepo.GetProfile(profileSlug)
+	cfg, err := filter.profilesRepo.GetProfile(ctx, profileSlug)
 	if err != nil {
 		return false, fmt.Errorf("fail extract profile cfg: %w", err)
 	}
