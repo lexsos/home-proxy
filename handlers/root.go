@@ -30,13 +30,13 @@ func (proxy *HttpProxyHandler) Handler(w http.ResponseWriter, r *http.Request) {
 	ctx, logger := logging.WithFields(r.Context(), log.Fields{"src": r.RemoteAddr, "dst": r.Host, "reqId": reqId})
 	account, err := proxy.authenticator.GetUser(ctx, r)
 	if err != nil {
-		logger.Warn("auth fail: ", err)
+		logger.Warn("Auth fail: ", err)
 		response.RequireAuth(w)
 		return
 	}
 	if account == nil {
 		response.RequireAuth(w)
-		logger.Info("Fail auth")
+		logger.Info("Account not found")
 		return
 	}
 	ctx, logger = logging.WithField(ctx, "user", account.Login)
