@@ -7,10 +7,18 @@ import (
 )
 
 func InitLog(config *Config) {
-	log.SetFormatter(&log.TextFormatter{
-		FullTimestamp: true,
-	})
+
+	switch config.LogFormat {
+	case LogFormatText:
+		log.SetFormatter(&log.TextFormatter{
+			FullTimestamp: true,
+		})
+	case LogFormatJson:
+		log.SetFormatter(&log.JSONFormatter{})
+	}
+
 	log.SetOutput(os.Stderr)
+
 	switch config.LogLevel {
 	case "debug":
 		log.SetLevel(log.DebugLevel)
@@ -21,5 +29,6 @@ func InitLog(config *Config) {
 	case "fatal":
 		log.SetLevel(log.FatalLevel)
 	}
+
 	log.Info("Init logs")
 }
