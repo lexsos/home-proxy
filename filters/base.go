@@ -32,7 +32,7 @@ func (filter *RequestFilter) HasAccess(ctx context.Context, profileSlug string, 
 		logger.Debug("Use allow policy")
 		return true, nil
 	case profiles.Strict:
-		logger.Debug("Use strict policy with domains set: ", cfg.DomainsSets)
+		logger.Debugf("Use strict policy with domains set: %v ", cfg.DomainsSets)
 		isMatch, err := filter.domainMatcher.Match(domain, cfg.DomainsSets)
 		if err != nil {
 			return false, fmt.Errorf("fail match domain '%s': %w", domain, err)

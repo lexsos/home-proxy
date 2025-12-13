@@ -30,7 +30,7 @@ func (proxy *HttpProxyHandler) Handler(w http.ResponseWriter, r *http.Request) {
 	ctx, logger := logging.WithFields(r.Context(), log.Fields{"src": r.RemoteAddr, "dst": r.Host, "reqId": reqId})
 	account, err := proxy.authenticator.GetUser(ctx, r)
 	if err != nil {
-		logger.Warn("Auth fail: ", err)
+		logger.Warnf("Auth fail: %v", err)
 		response.RequireAuth(w)
 		return
 	}
@@ -44,7 +44,7 @@ func (proxy *HttpProxyHandler) Handler(w http.ResponseWriter, r *http.Request) {
 	dstDomain := request.GetDstDomain(r)
 	allow, err := proxy.reqFilter.HasAccess(ctx, account.ProfileSlug, dstDomain)
 	if err != nil {
-		logger.Error("Filters fail:", err)
+		logger.Errorf("Filters fail: %v", err)
 		response.InternalError(w)
 		return
 	}

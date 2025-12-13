@@ -28,7 +28,7 @@ func (repo *InMemoryProfilesRepository) GetProfile(ctx context.Context, slug str
 		if _, ok := timeRange.weekDays[current.Day]; !ok && len(timeRange.weekDays) > 0 {
 			continue
 		}
-		logger.Debug("Use time range: ", i, " from profile: ", profile.slug)
+		logger.Debugf("Use time range %d from profile '%s'", i, profile.slug)
 		return &profiles.ProfileConfig{
 			Policy:      timeRange.policy,
 			DomainsSets: timeRange.domainsSets,

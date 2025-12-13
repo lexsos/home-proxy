@@ -35,7 +35,7 @@ func (jsonAuth *HttpAuthenticator) authByLogin(ctx context.Context, r *http.Requ
 		logger.Debug("Password incorrect")
 		return nil
 	}
-	logger.WithField("profile", account.ProfileSlug).Debug("Auth success")
+	logger.Debugf("Auth success for profile '%s' via login/password", account.ProfileSlug)
 	return &auth.Account{
 		Login:       account.Login,
 		ProfileSlug: account.ProfileSlug,
@@ -44,19 +44,19 @@ func (jsonAuth *HttpAuthenticator) authByLogin(ctx context.Context, r *http.Requ
 
 func (jsonAuth *HttpAuthenticator) authByIp(ctx context.Context, r *http.Request) *auth.Account {
 	logger := logging.LogFromContext(ctx)
-	logger.Debug("Try auth by IP")
+	logger.Debug("Try auth by ip")
 	ip := request.GetClientIpAddress(r)
 	if ip == "" {
-		logger.Debug("IP is empty")
+		logger.Debug("ip is empty")
 		return nil
 	}
 	logger = logger.WithField("ip", ip)
 	account, ok := jsonAuth.accountsByIp[ip]
 	if !ok {
-		logger.Debug("Account not found by IP")
+		logger.Debug("Account not found by ip")
 		return nil
 	}
-	logger.WithField("profile", account.ProfileSlug).Debug("Auth success")
+	logger.Debugf("Auth success for profile '%s' via ip", account.ProfileSlug)
 	return &auth.Account{
 		Login:       account.Login,
 		ProfileSlug: account.ProfileSlug,
