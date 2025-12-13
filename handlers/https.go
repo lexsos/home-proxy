@@ -1,16 +1,18 @@
 package handlers
 
 import (
+	"context"
 	"io"
 	"net"
 	"net/http"
 	"time"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/lexsos/home-proxy/logging"
 )
 
 // handleTunnel обрабатывает HTTPS CONNECT запросы (TLS/SSL)
-func handleTunnel(w http.ResponseWriter, req *http.Request) {
+func handleTunnel(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	logger := logging.LogFromContext(ctx)
 	destConn, err := net.DialTimeout("tcp", req.Host, 10*time.Second)
 	if err != nil {
 		http.Error(w, "Failed to connect to destination", http.StatusServiceUnavailable)
@@ -28,7 +30,7 @@ func handleTunnel(w http.ResponseWriter, req *http.Request) {
 	}
 	clientConn, _, err := hijacker.Hijack()
 	if err != nil {
-		log.Warn("Hijack error: ", err)
+		logger.Warnf("Hijack error: %v", err)
 		return
 	}
 	defer clientConn.Close()
@@ -36,5 +38,5 @@ func handleTunnel(w http.ResponseWriter, req *http.Request) {
 	// Прокидывать данные между клиентом и сервером (bidirectional copy)
 	go io.Copy(clientConn, destConn)
 	io.Copy(destConn, clientConn)
-	log.WithFields(log.Fields{"host": req.Host}).Info("Close connection")
+	logger.Info("Close connection")
 }

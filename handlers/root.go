@@ -56,7 +56,7 @@ func (proxy *HttpProxyHandler) Handler(w http.ResponseWriter, r *http.Request) {
 
 	logger.Info("New connection")
 	if strings.ToLower(r.Method) == "connect" {
-		handleTunnel(w, r)
+		handleTunnel(ctx, w, r)
 	} else {
 		handleHTTPProxy(w, r)
 	}
