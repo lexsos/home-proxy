@@ -6,7 +6,7 @@ import (
 
 	"github.com/lexsos/home-proxy/internal/domains"
 	"github.com/lexsos/home-proxy/internal/profiles"
-	"github.com/lexsos/home-proxy/pkg/logging"
+	"github.com/lexsos/home-proxy/internal/utils/logging"
 )
 
 type RequestFilter struct {

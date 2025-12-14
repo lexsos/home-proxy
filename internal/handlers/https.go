@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/lexsos/home-proxy/pkg/logging"
+	"github.com/lexsos/home-proxy/internal/utils/logging"
 )
 
 // handleTunnel обрабатывает HTTPS CONNECT запросы (TLS/SSL)
