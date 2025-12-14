@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	_ "time/tzdata"
 
 	"github.com/lexsos/home-proxy/internal/profiles"
 )

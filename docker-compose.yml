@@ -1,0 +1,10 @@
+services:
+  hproxy:
+    image: lexsos/hproxy:amd64
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:8080:8080"
+    volumes:
+      - ./var/config.json:/config.json
+    environment:
+      APP_LOG_FORMAT: text

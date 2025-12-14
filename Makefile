@@ -23,3 +23,5 @@ image_amd64: build_linux64
 image_upload: image_amd64
 	docker push $(DOCKER_IMAGE):amd64
 
+local:
+	docker-compose -f docker-compose.yml up --force-recreate --renew-anon-volumes --build
