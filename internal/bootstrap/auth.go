@@ -5,8 +5,8 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/lexsos/home-proxy/auth"
-	"github.com/lexsos/home-proxy/auth/inmemory"
+	"github.com/lexsos/home-proxy/internal/auth"
+	"github.com/lexsos/home-proxy/internal/auth/inmemory"
 )
 
 func InitAuth(config *Config) (auth.HttpAuthenticator, error) {

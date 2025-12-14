@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lexsos/home-proxy/domains"
+	"github.com/lexsos/home-proxy/internal/domains"
 	"github.com/lexsos/home-proxy/logging"
-	"github.com/lexsos/home-proxy/profiles"
+	"github.com/lexsos/home-proxy/internal/profiles"
 )
 
 type RequestFilter struct {

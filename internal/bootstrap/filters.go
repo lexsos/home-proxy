@@ -5,11 +5,11 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/lexsos/home-proxy/domains"
-	domainsInmemory "github.com/lexsos/home-proxy/domains/inmemory"
-	"github.com/lexsos/home-proxy/filters"
-	"github.com/lexsos/home-proxy/profiles"
-	profilesInmemory "github.com/lexsos/home-proxy/profiles/inmemory"
+	"github.com/lexsos/home-proxy/internal/domains"
+	domainsInmemory "github.com/lexsos/home-proxy/internal/domains/inmemory"
+	"github.com/lexsos/home-proxy/internal/filters"
+	"github.com/lexsos/home-proxy/internal/profiles"
+	profilesInmemory "github.com/lexsos/home-proxy/internal/profiles/inmemory"
 )
 
 func InitDomainMatcher(config *Config) (domains.DomainMatcher, error) {

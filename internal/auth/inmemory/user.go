@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/lexsos/home-proxy/auth"
+	"github.com/lexsos/home-proxy/internal/auth"
 	"github.com/lexsos/home-proxy/logging"
 	"github.com/lexsos/home-proxy/request"
 )

@@ -6,8 +6,8 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/lexsos/home-proxy/auth"
-	"github.com/lexsos/home-proxy/filters"
+	"github.com/lexsos/home-proxy/internal/auth"
+	"github.com/lexsos/home-proxy/internal/filters"
 	"github.com/lexsos/home-proxy/logging"
 	"github.com/lexsos/home-proxy/request"
 	"github.com/lexsos/home-proxy/response"

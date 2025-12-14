@@ -6,9 +6,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/lexsos/home-proxy/auth"
-	"github.com/lexsos/home-proxy/filters"
-	"github.com/lexsos/home-proxy/handlers"
+	"github.com/lexsos/home-proxy/internal/auth"
+	"github.com/lexsos/home-proxy/internal/filters"
+	"github.com/lexsos/home-proxy/internal/handlers"
 )
 
 func InitHttpServer(config *Config, authenticator auth.HttpAuthenticator, reqFilter *filters.RequestFilter) (*http.Server, error) {

@@ -3,7 +3,7 @@ package inmemory
 import (
 	"time"
 
-	"github.com/lexsos/home-proxy/profiles"
+	"github.com/lexsos/home-proxy/internal/profiles"
 )
 
 type TimeRange struct {
