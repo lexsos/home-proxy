@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/lexsos/home-proxy/internal/domains"
-	"github.com/lexsos/home-proxy/logging"
 	"github.com/lexsos/home-proxy/internal/profiles"
+	"github.com/lexsos/home-proxy/pkg/logging"
 )
 
 type RequestFilter struct {

@@ -8,9 +8,9 @@ import (
 
 	"github.com/lexsos/home-proxy/internal/auth"
 	"github.com/lexsos/home-proxy/internal/filters"
-	"github.com/lexsos/home-proxy/logging"
-	"github.com/lexsos/home-proxy/request"
-	"github.com/lexsos/home-proxy/response"
+	"github.com/lexsos/home-proxy/pkg/logging"
+	"github.com/lexsos/home-proxy/pkg/request"
+	"github.com/lexsos/home-proxy/pkg/response"
 )
 
 type HttpProxyHandler struct {

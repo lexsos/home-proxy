@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lexsos/home-proxy/logging"
 	"github.com/lexsos/home-proxy/internal/profiles"
+	"github.com/lexsos/home-proxy/pkg/logging"
 )
 
 func (repo *InMemoryProfilesRepository) GetProfile(ctx context.Context, slug string) (*profiles.ProfileConfig, error) {

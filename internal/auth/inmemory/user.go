@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/lexsos/home-proxy/internal/auth"
-	"github.com/lexsos/home-proxy/logging"
-	"github.com/lexsos/home-proxy/request"
+	"github.com/lexsos/home-proxy/pkg/logging"
+	"github.com/lexsos/home-proxy/pkg/request"
 )
 
 func (jsonAuth *HttpAuthenticator) GetUser(ctx context.Context, r *http.Request) (*auth.Account, error) {
