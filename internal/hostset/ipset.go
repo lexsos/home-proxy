@@ -5,15 +5,23 @@ import (
 	"net"
 )
 
+type IP4 [4]byte
+type IP6 [16]byte
+
 type IpSet struct {
+	ip4Addresses map[IP4]struct{}
+	ip6Addresses map[IP6]struct{}
 	ip4Nets      []*net.IPNet
-	ip4Addresses []net.IP
 	ip6Nets      []*net.IPNet
-	ip6Addresses []net.IP
 }
 
 func NewIpSet() *IpSet {
-	return &IpSet{}
+	return &IpSet{
+		ip4Addresses: make(map[IP4]struct{}),
+		ip6Addresses: make(map[IP6]struct{}),
+		ip4Nets:      make([]*net.IPNet, 0),
+		ip6Nets:      make([]*net.IPNet, 0),
+	}
 }
 
 func (s *IpSet) Add(ip string) error {
@@ -32,10 +40,11 @@ func (s *IpSet) Add(ip string) error {
 
 func (s *IpSet) AddAddress(ip net.IP) {
 	if addr := ip.To4(); addr != nil {
-		s.ip4Addresses = append(s.ip4Addresses, addr)
+		s.ip4Addresses[IP4(addr)] = struct{}{}
 		return
 	}
-	s.ip6Addresses = append(s.ip6Addresses, ip)
+	addr := ip.To16()
+	s.ip6Addresses[IP6(addr)] = struct{}{}
 }
 
 func (s *IpSet) AddSubNet(ipNet *net.IPNet) {
@@ -54,10 +63,9 @@ func (s *IpSet) Contains(ip net.IP) bool {
 }
 
 func (s *IpSet) contain4(ip net.IP) bool {
-	for _, addr := range s.ip4Addresses {
-		if addr.Equal(ip) {
-			return true
-		}
+	_, ok := s.ip4Addresses[IP4(ip)]
+	if ok {
+		return true
 	}
 	for _, ipNet := range s.ip4Nets {
 		if ipNet.Contains(ip) {
@@ -68,10 +76,9 @@ func (s *IpSet) contain4(ip net.IP) bool {
 }
 
 func (s *IpSet) contain6(ip net.IP) bool {
-	for _, addr := range s.ip6Addresses {
-		if addr.Equal(ip) {
-			return true
-		}
+	_, ok := s.ip6Addresses[IP6(ip)]
+	if ok {
+		return true
 	}
 	for _, ipNet := range s.ip6Nets {
 		if ipNet.Contains(ip) {
