@@ -64,6 +64,6 @@ func (s *InMemoryIpSetTestSuite) TestAddInvalid() {
 	assert.EqualError(s.T(), err, "invalid ip or network: 192.168.1.0/33")
 }
 
-func TestRunSuite(t *testing.T) {
+func TestRunnMemoryIpSetSuite(t *testing.T) {
 	suite.Run(t, new(InMemoryIpSetTestSuite))
 }

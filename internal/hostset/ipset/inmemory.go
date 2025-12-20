@@ -29,19 +29,21 @@ func (s *InMemoryIpSet) Add(ip string) error {
 	}
 	addr := net.ParseIP(ip)
 	if addr != nil {
-		s.AddAddress(addr)
-		return nil
+		return s.AddAddress(addr)
 	}
 	return fmt.Errorf("invalid ip or network: %s", ip)
 }
 
-func (s *InMemoryIpSet) AddAddress(ip net.IP) {
-	if addr := ip.To4(); addr != nil {
-		s.ip4Addresses[IP4(addr)] = struct{}{}
-		return
+func (s *InMemoryIpSet) AddAddress(ip net.IP) error {
+	if addr4 := toIP4(ip); addr4 != nil {
+		s.ip4Addresses[*addr4] = struct{}{}
+		return nil
 	}
-	addr := ip.To16()
-	s.ip6Addresses[IP6(addr)] = struct{}{}
+	if addr6 := toIP6(ip); addr6 != nil {
+		s.ip6Addresses[*addr6] = struct{}{}
+		return nil
+	}
+	return fmt.Errorf("invalid ip: %s", ip)
 }
 
 func (s *InMemoryIpSet) AddSubNet(ipNet *net.IPNet) {
