@@ -19,38 +19,44 @@ func (s *IpSetTestSuite) SetupTest() {
 
 func (s *IpSetTestSuite) TestNoData() {
 	ip := net.ParseIP("192.168.1.1")
-	assert.False(s.T(), s.IpSet.Contains(ip))
+	contains, _ := s.IpSet.Contains(ip)
+	assert.False(s.T(), contains)
 }
 
 func (s *IpSetTestSuite) TestFind4ByAddress() {
 	s.IpSet.Add("192.168.1.1")
 	ip := net.ParseIP("192.168.1.1")
-	assert.True(s.T(), s.IpSet.Contains(ip))
+	contains, _ := s.IpSet.Contains(ip)
+	assert.True(s.T(), contains)
 }
 
 func (s *IpSetTestSuite) TestFind4ByCIDR() {
 	s.IpSet.Add("192.168.1.0/24")
 	ip := net.ParseIP("192.168.1.1")
-	assert.True(s.T(), s.IpSet.Contains(ip))
+	contains, _ := s.IpSet.Contains(ip)
+	assert.True(s.T(), contains)
 }
 
 func (s *IpSetTestSuite) TestFind6ByAddress() {
 	s.IpSet.Add("2001:db8::1")
 	ip := net.ParseIP("2001:db8::1")
-	assert.True(s.T(), s.IpSet.Contains(ip))
+	contains, _ := s.IpSet.Contains(ip)
+	assert.True(s.T(), contains)
 }
 
 func (s *IpSetTestSuite) TestFind6ByCIDR() {
 	s.IpSet.Add("2001:db8::/64")
 	ip := net.ParseIP("2001:db8::1")
-	assert.True(s.T(), s.IpSet.Contains(ip))
+	contains, _ := s.IpSet.Contains(ip)
+	assert.True(s.T(), contains)
 }
 
 func (s *IpSetTestSuite) TestMiss() {
 	s.IpSet.Add("192.168.1.0/24")
 	s.IpSet.Add("192.168.2.1")
 	ip := net.ParseIP("192.168.3.1")
-	assert.False(s.T(), s.IpSet.Contains(ip))
+	contains, _ := s.IpSet.Contains(ip)
+	assert.False(s.T(), contains)
 }
 
 func (s *IpSetTestSuite) TestAddInvalid() {

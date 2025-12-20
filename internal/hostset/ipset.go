@@ -6,8 +6,7 @@ import (
 )
 
 type IpSet interface {
-	Add(ip string) error
-	Contains(ip net.IP) bool
+	Contains(ip net.IP) (bool, error)
 }
 
 type IP4 [4]byte
@@ -60,11 +59,11 @@ func (s *InMemoryIpSet) AddSubNet(ipNet *net.IPNet) {
 	s.ip6Nets = append(s.ip6Nets, ipNet)
 }
 
-func (s *InMemoryIpSet) Contains(ip net.IP) bool {
+func (s *InMemoryIpSet) Contains(ip net.IP) (bool, error) {
 	if addr := ip.To4(); addr != nil {
-		return s.contain4(addr)
+		return s.contain4(addr), nil
 	}
-	return s.contain6(ip)
+	return s.contain6(ip), nil
 }
 
 func (s *InMemoryIpSet) contain4(ip net.IP) bool {
