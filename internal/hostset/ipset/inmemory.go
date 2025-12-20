@@ -1,16 +1,9 @@
-package hostset
+package ipset
 
 import (
 	"fmt"
 	"net"
 )
-
-type IpSet interface {
-	Contains(ip net.IP) (bool, error)
-}
-
-type IP4 [4]byte
-type IP6 [16]byte
 
 type InMemoryIpSet struct {
 	ip4Addresses map[IP4]struct{}
