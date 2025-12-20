@@ -10,11 +10,11 @@ import (
 
 type IpSetTestSuite struct {
 	suite.Suite
-	IpSet *IpSet
+	IpSet *InMemoryIpSet
 }
 
 func (s *IpSetTestSuite) SetupTest() {
-	s.IpSet = NewIpSet()
+	s.IpSet = NewInMemoryIpSet()
 }
 
 func (s *IpSetTestSuite) TestNoData() {
