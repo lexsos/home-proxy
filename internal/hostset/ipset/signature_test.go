@@ -68,12 +68,23 @@ func (s *SignatureTestSuite) TestWrongVersion() {
 }
 
 func (s *SignatureTestSuite) TestMaskFor6() {
-	ip := net.ParseIP("2001:db8::1")
-	expected := net.ParseIP("2001:db8::0")
-	sig, _ := NewIpSignature(ip)
-	masked, err := sig.GetForMask6(64)
-	assert.Nil(s.T(), err)
-	assert.Equal(s.T(), *toIP6(expected), masked)
+	subTests := []struct {
+		maskLen  int
+		expected string
+	}{
+		{128, "2001:db8::1"},
+		{64, "2001:db8::0"},
+	}
+
+	for _, data := range subTests {
+		s.T().Run(data.expected, func(t *testing.T) {
+			ip := net.ParseIP("2001:db8::1")
+			sig, _ := NewIpSignature(ip)
+			masked, err := sig.GetForMask6(data.maskLen)
+			assert.Nil(s.T(), err)
+			assert.Equal(s.T(), *toIP6(net.ParseIP(data.expected)), masked)
+		})
+	}
 }
 
 func TestRunSignatureSuite(t *testing.T) {

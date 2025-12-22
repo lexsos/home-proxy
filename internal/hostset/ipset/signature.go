@@ -15,28 +15,28 @@ const (
 type IpSignature struct {
 	src     net.IP
 	version IpVersin
-	ip4     IP4
-	ip6     IP6
 	nets4   map[int]IP4
 	nets6   map[int]IP6
 }
 
 func NewIpSignature(ip net.IP) (*IpSignature, error) {
 	if addr4 := toIP4(ip); addr4 != nil {
+		nets4 := make(map[int]IP4)
+		nets4[32] = *addr4
 		return &IpSignature{
 			src:     ip,
 			version: IPv4,
-			ip4:     *addr4,
-			nets4:   make(map[int]IP4),
+			nets4:   nets4,
 			nets6:   make(map[int]IP6),
 		}, nil
 	}
 	if addr6 := toIP6(ip); addr6 != nil {
+		nets6 := make(map[int]IP6)
+		nets6[128] = *addr6
 		return &IpSignature{
 			src:     ip,
 			version: IPv6,
-			ip6:     *addr6,
-			nets6:   make(map[int]IP6),
+			nets6:   nets6,
 			nets4:   make(map[int]IP4),
 		}, nil
 	}
@@ -54,8 +54,7 @@ func (s *IpSignature) GetForMask4(maskLen int) (IP4, error) {
 	if maskLen > 32 || maskLen < 0 {
 		return IP4{}, fmt.Errorf("can't get ip for mask4: invalid mask len: %d", maskLen)
 	}
-	mask := net.CIDRMask(maskLen, 32)
-	masked = *toIP4(s.src.Mask(mask))
+	masked = *MaskIp4(s.src, maskLen)
 	s.nets4[maskLen] = masked
 	return masked, nil
 }
@@ -71,8 +70,7 @@ func (s *IpSignature) GetForMask6(maskLen int) (IP6, error) {
 	if maskLen > 128 || maskLen < 0 {
 		return IP6{}, fmt.Errorf("can't get ip for mask6: invalid mask len: %d", maskLen)
 	}
-	mask := net.CIDRMask(maskLen, 128)
-	masked = *toIP6(s.src.Mask(mask))
+	masked = *MaskIp6(s.src, maskLen)
 	s.nets6[maskLen] = masked
 	return masked, nil
 }
