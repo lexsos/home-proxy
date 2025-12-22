@@ -6,83 +6,97 @@ import (
 )
 
 type InMemoryIpSet struct {
-	ip4Addresses map[IP4]struct{}
-	ip6Addresses map[IP6]struct{}
-	ip4Nets      []*net.IPNet
-	ip6Nets      []*net.IPNet
+	ip4Nets map[IP4]struct{}
+	ip6Nets map[IP6]struct{}
+	lens4   map[int]struct{}
+	lens6   map[int]struct{}
 }
 
 func NewInMemoryIpSet() *InMemoryIpSet {
 	return &InMemoryIpSet{
-		ip4Addresses: make(map[IP4]struct{}),
-		ip6Addresses: make(map[IP6]struct{}),
-		ip4Nets:      make([]*net.IPNet, 0),
-		ip6Nets:      make([]*net.IPNet, 0),
+		ip4Nets: make(map[IP4]struct{}),
+		ip6Nets: make(map[IP6]struct{}),
+		lens4:   make(map[int]struct{}),
+		lens6:   make(map[int]struct{}),
 	}
 }
 
 func (s *InMemoryIpSet) Add(ip string) error {
 	_, ipNet, err := net.ParseCIDR(ip)
 	if err == nil {
-		s.AddSubNet(ipNet)
-		return nil
+		return s.addSubNet(ipNet)
 	}
 	addr := net.ParseIP(ip)
 	if addr != nil {
-		return s.AddAddress(addr)
+		return s.addAddress(addr)
 	}
 	return fmt.Errorf("invalid ip or network: %s", ip)
 }
 
-func (s *InMemoryIpSet) AddAddress(ip net.IP) error {
+func (s *InMemoryIpSet) addAddress(ip net.IP) error {
 	if addr4 := toIP4(ip); addr4 != nil {
-		s.ip4Addresses[*addr4] = struct{}{}
+		s.ip4Nets[*addr4] = struct{}{}
+		s.lens4[32] = struct{}{}
 		return nil
 	}
 	if addr6 := toIP6(ip); addr6 != nil {
-		s.ip6Addresses[*addr6] = struct{}{}
+		s.ip6Nets[*addr6] = struct{}{}
+		s.lens6[128] = struct{}{}
 		return nil
 	}
 	return fmt.Errorf("invalid ip: %s", ip)
 }
 
-func (s *InMemoryIpSet) AddSubNet(ipNet *net.IPNet) {
-	if ipNet.IP.To4() != nil {
-		s.ip4Nets = append(s.ip4Nets, ipNet)
-		return
+func (s *InMemoryIpSet) addSubNet(ipNet *net.IPNet) error {
+	maskLen, bits := ipNet.Mask.Size()
+	if bits == 32 {
+		masked := MaskIp4(ipNet.IP, maskLen)
+		s.ip4Nets[*masked] = struct{}{}
+		s.lens4[maskLen] = struct{}{}
+		return nil
 	}
-	s.ip6Nets = append(s.ip6Nets, ipNet)
+	if bits == 128 {
+		masked := MaskIp6(ipNet.IP, maskLen)
+		s.ip6Nets[*masked] = struct{}{}
+		s.lens6[maskLen] = struct{}{}
+		return nil
+	}
+	return fmt.Errorf("invalid ip net: %s", ipNet)
 }
 
 func (s *InMemoryIpSet) Contains(ip net.IP) (bool, error) {
-	if addr := ip.To4(); addr != nil {
-		return s.contain4(addr), nil
+	sig, err := NewIpSignature(ip)
+	if err != nil {
+		return false, fmt.Errorf("invalid ip: %s", ip)
 	}
-	return s.contain6(ip), nil
+	return s.ContainsSig(sig)
 }
 
-func (s *InMemoryIpSet) contain4(ip net.IP) bool {
-	_, ok := s.ip4Addresses[IP4(ip)]
-	if ok {
-		return true
+func (s *InMemoryIpSet) ContainsSig(sig *IpSignature) (bool, error) {
+	if sig.Is4() {
+		for maskLen := range s.lens4 {
+			masked, err := sig.GetForMask4(maskLen)
+			if err != nil {
+				return false, fmt.Errorf("invalid mask len for ip4: %d", maskLen)
+			}
+			_, ok := s.ip4Nets[masked]
+			if ok {
+				return true, nil
+			}
+		}
+		return false, nil
 	}
-	for _, ipNet := range s.ip4Nets {
-		if ipNet.Contains(ip) {
-			return true
+	if sig.Is6() {
+		for maskLen := range s.lens6 {
+			masked, err := sig.GetForMask6(maskLen)
+			if err != nil {
+				return false, fmt.Errorf("invalid mask len for ip6: %d", maskLen)
+			}
+			_, ok := s.ip6Nets[masked]
+			if ok {
+				return true, nil
+			}
 		}
 	}
-	return false
-}
-
-func (s *InMemoryIpSet) contain6(ip net.IP) bool {
-	_, ok := s.ip6Addresses[IP6(ip)]
-	if ok {
-		return true
-	}
-	for _, ipNet := range s.ip6Nets {
-		if ipNet.Contains(ip) {
-			return true
-		}
-	}
-	return false
+	return false, fmt.Errorf("invalid ip: %s", sig.Src())
 }

@@ -82,3 +82,7 @@ func (s *IpSignature) Is4() bool {
 func (s *IpSignature) Is6() bool {
 	return s.version == IPv6
 }
+
+func (s *IpSignature) Src() net.IP {
+	return s.src
+}
