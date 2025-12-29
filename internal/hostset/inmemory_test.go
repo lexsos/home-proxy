@@ -27,7 +27,9 @@ func (s *InMemoryHostRepositoryTestSuit) TestNoData() {
 	subTests := []string{"127.0.0.1", "example.com"}
 	for _, host := range subTests {
 		s.T().Run(host, func(t *testing.T) {
-			s.False(s.repo.Contains(host, []string{"test"}))
+			contains, err := s.repo.Contains(host, []string{"test"})
+			s.False(contains)
+			s.Nil(err)
 		})
 	}
 }
@@ -36,19 +38,25 @@ func (s *InMemoryHostRepositoryTestSuit) TestNoSet() {
 	subTests := []string{"127.0.0.1", "example.com"}
 	for _, host := range subTests {
 		s.T().Run(host, func(t *testing.T) {
-			s.False(s.repo.Contains(host, []string{"wrong"}))
+			contains, err := s.repo.Contains(host, []string{"wrong"})
+			s.False(contains)
+			s.Nil(err)
 		})
 	}
 }
 
 func (s *InMemoryHostRepositoryTestSuit) TestContainsIp() {
 	s.ips.Add("127.0.0.1")
-	s.True(s.repo.Contains("127.0.0.1", []string{"test"}))
+	contains, err := s.repo.Contains("127.0.0.1", []string{"test"})
+	s.True(contains)
+	s.Nil(err)
 }
 
 func (s *InMemoryHostRepositoryTestSuit) TestContainsDomain() {
 	s.domains.Add("example.com", domainset.ExactDomain)
-	s.True(s.repo.Contains("example.com", []string{"test"}))
+	contains, err := s.repo.Contains("example.com", []string{"test"})
+	s.True(contains)
+	s.Nil(err)
 }
 
 func (s *InMemoryHostRepositoryTestSuit) TestSeveralSets() {
@@ -60,7 +68,9 @@ func (s *InMemoryHostRepositoryTestSuit) TestSeveralSets() {
 	subTests := []string{"127.0.0.1", "example.com"}
 	for _, host := range subTests {
 		s.T().Run(host, func(t *testing.T) {
-			s.True(s.repo.Contains(host, []string{"test", "example"}))
+			contains, err := s.repo.Contains(host, []string{"test", "example"})
+			s.True(contains)
+			s.Nil(err)
 		})
 	}
 }
@@ -74,7 +84,9 @@ func (s *InMemoryHostRepositoryTestSuit) TestFilterBySetsList() {
 	subTests := []string{"127.0.0.1", "example.com"}
 	for _, host := range subTests {
 		s.T().Run(host, func(t *testing.T) {
-			s.False(s.repo.Contains(host, []string{"test"}))
+			contains, err := s.repo.Contains(host, []string{"test"})
+			s.False(contains)
+			s.Nil(err)
 		})
 	}
 }
