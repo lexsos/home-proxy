@@ -1,4 +1,4 @@
-package domaimset
+package domainset
 
 import "strings"
 
