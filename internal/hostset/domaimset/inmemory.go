@@ -1,15 +1,4 @@
-package hostset
-
-type DomainSet interface {
-	Contains(domain string) (bool, error)
-}
-
-type MatchType string
-
-const (
-	ExactDomain MatchType = "exactdomain"
-	SubDomains  MatchType = "subdomains"
-)
+package domaimset
 
 type Domain struct {
 	Dns  string
