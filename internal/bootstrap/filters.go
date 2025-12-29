@@ -5,21 +5,21 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/lexsos/home-proxy/internal/domains"
-	domainsInmemory "github.com/lexsos/home-proxy/internal/domains/inmemory"
 	"github.com/lexsos/home-proxy/internal/filters"
+	"github.com/lexsos/home-proxy/internal/hostset"
+	"github.com/lexsos/home-proxy/internal/loader"
 	"github.com/lexsos/home-proxy/internal/profiles"
 	profilesInmemory "github.com/lexsos/home-proxy/internal/profiles/inmemory"
 )
 
-func InitDomainMatcher(config *Config) (domains.DomainMatcher, error) {
-	log.Info("Loading domains")
+func InitHostRepository(config *Config) (hostset.HostRepository, error) {
+	log.Info("Loading hosts")
 	if config.JsonAuth != "" {
-		domains, err := domainsInmemory.NewDomainSetRepositoryFromJson(config.JsonAuth)
+		repo, err := loader.LoadHostRepository(config.JsonAuth)
 		if err != nil {
-			return nil, fmt.Errorf("failed to bootstrap domains from json: %w", err)
+			return nil, fmt.Errorf("failed to bootstrap hosts from json: %w", err)
 		}
-		return domains, nil
+		return repo, nil
 	}
 	return nil, fmt.Errorf("No filters config")
 }
@@ -37,7 +37,7 @@ func InitProfileRepository(config *Config) (profiles.ProfilesRepository, error) 
 }
 
 func InitFilter(config *Config) (*filters.RequestFilter, error) {
-	domains, err := InitDomainMatcher(config)
+	hosts, err := InitHostRepository(config)
 	if err != nil {
 		return nil, err
 	}
@@ -45,5 +45,5 @@ func InitFilter(config *Config) (*filters.RequestFilter, error) {
 	if err != nil {
 		return nil, err
 	}
-	return filters.NewRequestFilter(profileRepo, domains), nil
+	return filters.NewRequestFilter(profileRepo, hosts), nil
 }
