@@ -9,7 +9,7 @@ import (
 	"github.com/lexsos/home-proxy/internal/socks"
 )
 
-func InitSocksServer(filter filters.RequestFilter, authenticator auth.Authenticator) (*socks5.Server, error) {
+func InitSocksServer(filter *filters.RequestFilter, authenticator auth.Authenticator) (*socks5.Server, error) {
 	log.Info("Creating socks5 server")
 	rules := socks.NewSocksRules(filter, authenticator)
 	conf := &socks5.Config{

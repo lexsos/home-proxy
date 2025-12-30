@@ -23,11 +23,16 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	server, err := bootstrap.InitHttpServer(config, authenticator, filter)
+	httpServer, err := bootstrap.InitHttpServer(config, authenticator, filter)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	_, err = bootstrap.InitSocksServer(filter, authenticator)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 	log.Infof("Starting HTTP/HTTPS proxy on port %s", config.ProxyAddr)
-	log.Fatal(server.ListenAndServe())
+	log.Fatal(httpServer.ListenAndServe())
 }

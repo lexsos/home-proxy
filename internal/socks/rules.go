@@ -11,11 +11,11 @@ import (
 )
 
 type SocksRules struct {
-	filter        filters.RequestFilter
+	filter        *filters.RequestFilter
 	authenticator auth.Authenticator
 }
 
-func NewSocksRules(filter filters.RequestFilter, authenticator auth.Authenticator) *SocksRules {
+func NewSocksRules(filter *filters.RequestFilter, authenticator auth.Authenticator) *SocksRules {
 	return &SocksRules{
 		filter:        filter,
 		authenticator: authenticator,
