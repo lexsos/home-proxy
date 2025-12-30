@@ -8,24 +8,17 @@ import (
 	"github.com/lexsos/home-proxy/internal/hostset"
 	"github.com/lexsos/home-proxy/internal/hostset/domainset"
 	"github.com/lexsos/home-proxy/internal/hostset/ipset"
-)
-
-type MatchType string
-
-const (
-	ExactHost       MatchType = "exact"
-	SubDomainsHosts MatchType = "subdomains"
-	Ip              MatchType = "ip"
+	"github.com/lexsos/home-proxy/internal/loader/fields"
 )
 
 type jsonHost struct {
-	Host string    `json:"host"`
-	Type MatchType `json:"type"`
+	Host fields.NotEmptyString `json:"host"`
+	Type fields.MatchType      `json:"type"`
 }
 
 type jsonHostSet struct {
-	Slug  string     `json:"slug"`
-	Hosts []jsonHost `json:"hosts"`
+	Slug  fields.NotEmptyString `json:"slug"`
+	Hosts []jsonHost            `json:"hosts"`
 }
 
 type jsonHostSets struct {
@@ -47,18 +40,18 @@ func LoadHostRepository(fileName string) (hostset.HostRepository, error) {
 		domains := domainset.NewInMemoryDomainsSet()
 		for _, host := range hostSet.Hosts {
 			switch host.Type {
-			case ExactHost:
-				domains.Add(host.Host, domainset.ExactDomain)
-			case SubDomainsHosts:
-				domains.Add(host.Host, domainset.SubDomains)
-			case Ip:
-				err := ips.Add(host.Host)
+			case fields.ExactHost:
+				domains.Add(host.Host.String(), domainset.ExactDomain)
+			case fields.SubDomainsHosts:
+				domains.Add(host.Host.String(), domainset.SubDomains)
+			case fields.Ip:
+				err := ips.Add(host.Host.String())
 				if err != nil {
 					return nil, fmt.Errorf("failed to add ip to set: %w", err)
 				}
 			}
 		}
-		repo.AddHostSet(hostSet.Slug, ips, domains)
+		repo.AddHostSet(hostSet.Slug.String(), ips, domains)
 	}
 	return repo, nil
 }
