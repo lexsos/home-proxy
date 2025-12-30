@@ -108,6 +108,11 @@ func (repo *InMemoryAuthRepository) GetByLogin(login string) (*Account, error) {
 	}, nil
 }
 
+func (repo *InMemoryAuthRepository) Valid(user, password string) bool {
+	account, _ := repo.AuthByPassword(context.Background(), user, password)
+	return account != nil
+}
+
 func (repo *InMemoryAuthRepository) GetUser(ctx context.Context, r *http.Request) (*Account, error) {
 	logger := logging.LogFromContext(ctx)
 	lp := request.GetLoginPass(r)
