@@ -26,7 +26,7 @@ func (rules *SocksRules) Allow(ctx context.Context, req *socks5.Request) (contex
 	logger := logging.LogFromContext(ctx)
 	profile := rules.profile(ctx, req)
 	if profile == "" {
-		logger.Debugf("unknown profile for '%s'", req.RemoteAddr.IP)
+		logger.Infof("unknown profile for '%s'", req.RemoteAddr.IP)
 		return ctx, false
 	}
 	dst := rules.dst(req)
@@ -36,10 +36,10 @@ func (rules *SocksRules) Allow(ctx context.Context, req *socks5.Request) (contex
 		return ctx, false
 	}
 	if hasAccess {
-		logger.Debugf("allow access for '%s' to '%s' in socks rules", profile, dst)
+		logger.Infof("allow access for '%s' to '%s' in socks rules", profile, dst)
 		return ctx, true
 	}
-	logger.Debugf("deny access for '%s' to '%s' in socks rules", profile, dst)
+	logger.Infof("deny access for '%s' to '%s' in socks rules", profile, dst)
 	return ctx, hasAccess
 }
 
