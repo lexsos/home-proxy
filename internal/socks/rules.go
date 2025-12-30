@@ -36,10 +36,10 @@ func (rules *SocksRules) Allow(ctx context.Context, req *socks5.Request) (contex
 		return ctx, false
 	}
 	if hasAccess {
-		logger.Infof("allow access for '%s' to '%s' in socks rules", profile, dst)
+		logger.Infof("allow access for '%s' to '%s' in socks rules", req.RemoteAddr.IP, dst)
 		return ctx, true
 	}
-	logger.Infof("deny access for '%s' to '%s' in socks rules", profile, dst)
+	logger.Infof("deny access for '%s' to '%s' in socks rules", req.RemoteAddr.IP, dst)
 	return ctx, hasAccess
 }
 
