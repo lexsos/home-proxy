@@ -5,7 +5,7 @@ format:
 	goimports -w -local "github.com/lexsos/home-proxy" .
 
 tests:
-	go test -v ./...
+	go test -v -count=1 ./...
 
 clear:
 	rm -rf ./build
