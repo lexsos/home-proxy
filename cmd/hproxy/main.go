@@ -3,7 +3,7 @@ package main
 import (
 	log "github.com/sirupsen/logrus"
 
-	"github.com/lexsos/home-proxy/internal/bootstrap"
+	"github.com/lexsos/home-proxy/cmd/hproxy/bootstrap"
 )
 
 func main() {
