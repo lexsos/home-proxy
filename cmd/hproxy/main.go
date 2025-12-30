@@ -1,58 +1,32 @@
 package main
 
 import (
-	"net/http"
-
-	"github.com/armon/go-socks5"
 	log "github.com/sirupsen/logrus"
-
-	"github.com/lexsos/home-proxy/cmd/hproxy/bootstrap"
 )
 
 func main() {
-	config, err := bootstrap.ParseConfig()
+	deps, err := NewDeps()
 	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	bootstrap.InitLog(config)
-	authenticator, err := bootstrap.InitAuth(config)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	filter, err := bootstrap.InitFilter(config)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	httpServer, err := bootstrap.InitHttpServer(config, authenticator, filter)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	socksServer, err := bootstrap.InitSocksServer(filter, authenticator)
-	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("fail create deps: %s", err)
 		return
 	}
 
 	errChan := make(chan error, 2)
-	if config.ProxyAddr != "" {
-		go runHttp(config, httpServer, errChan)
+	if deps.HasHttpServer() {
+		go runHttp(deps, errChan)
 	}
-	if config.SocksAddr != "" {
-		go runSocks(config, socksServer, errChan)
+	if deps.HasSocksServer() {
+		go runSocks(deps, errChan)
 	}
 	log.Fatal(<-errChan)
 }
 
-func runHttp(config *bootstrap.Config, server *http.Server, errChan chan<- error) {
-	log.Infof("Starting HTTP/HTTPS proxy on port %s", config.ProxyAddr)
-	errChan <- server.ListenAndServe()
+func runHttp(deps *Deps, errChan chan<- error) {
+	log.Infof("Starting HTTP/HTTPS proxy on port %s", deps.config.ProxyAddr)
+	errChan <- deps.httpServer.ListenAndServe()
 }
 
-func runSocks(config *bootstrap.Config, server *socks5.Server, errChan chan<- error) {
-	log.Infof("Starting SOCKS5 proxy on port %s", config.SocksAddr)
-	errChan <- server.ListenAndServe("tcp", config.SocksAddr)
+func runSocks(deps *Deps, errChan chan<- error) {
+	log.Infof("Starting SOCKS5 proxy on port %s", deps.config.SocksAddr)
+	errChan <- deps.socksServer.ListenAndServe("tcp", deps.config.SocksAddr)
 }
