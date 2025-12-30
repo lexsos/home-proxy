@@ -1,6 +1,9 @@
 package main
 
 import (
+	"net/http"
+
+	"github.com/armon/go-socks5"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/lexsos/home-proxy/cmd/hproxy/bootstrap"
@@ -28,11 +31,21 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	_, err = bootstrap.InitSocksServer(filter, authenticator)
+	socksServer, err := bootstrap.InitSocksServer(filter, authenticator)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
+	runHttp(config, httpServer)
+	runSocks(config, socksServer)
+}
+
+func runHttp(config *bootstrap.Config, server *http.Server) {
 	log.Infof("Starting HTTP/HTTPS proxy on port %s", config.ProxyAddr)
-	log.Fatal(httpServer.ListenAndServe())
+	log.Fatal(server.ListenAndServe())
+}
+
+func runSocks(config *bootstrap.Config, server *socks5.Server) {
+	log.Infof("Starting SOCKS5 proxy on port %s", config.SocksAddr)
+	log.Fatal(server.ListenAndServe("tcp", config.SocksAddr))
 }
