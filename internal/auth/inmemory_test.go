@@ -2,6 +2,8 @@ package auth
 
 import (
 	"context"
+	"encoding/base64"
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
@@ -54,6 +56,33 @@ func (s *InMemoryAuthRepositoryTestSuit) TestAuthByIp() {
 func (s *InMemoryAuthRepositoryTestSuit) TestFailAuthByIp() {
 	s.repo.AddWithIps("test", "test", []string{"127.0.0.1", "127.0.0.2"})
 	account, err := s.repo.AuthByIp(context.Background(), "127.0.0.3")
+	s.NoError(err)
+	s.Nil(account)
+}
+
+func (s *InMemoryAuthRepositoryTestSuit) TestGetUserByPassword() {
+	s.repo.AddWithPassword("testuser", "testprofile", "testpass")
+	req, _ := http.NewRequest("GET", "http://example.com", nil)
+	auth := base64.StdEncoding.EncodeToString([]byte("testuser:testpass"))
+	req.Header.Set("Proxy-Authorization", "Basic "+auth)
+	account, err := s.repo.GetUser(context.Background(), req)
+	s.NoError(err)
+	s.Equal("testuser", account.Login)
+}
+
+func (s *InMemoryAuthRepositoryTestSuit) TestGetUserByIp() {
+	s.repo.AddWithIps("ipuser", "ipprofile", []string{"192.168.1.1"})
+	req, _ := http.NewRequest("GET", "http://example.com", nil)
+	req.RemoteAddr = "192.168.1.1:12345"
+	account, err := s.repo.GetUser(context.Background(), req)
+	s.NoError(err)
+	s.Equal("ipuser", account.Login)
+}
+
+func (s *InMemoryAuthRepositoryTestSuit) TestGetUserNoAuth() {
+	req, _ := http.NewRequest("GET", "http://example.com", nil)
+	req.RemoteAddr = "10.0.0.1:12345"
+	account, err := s.repo.GetUser(context.Background(), req)
 	s.NoError(err)
 	s.Nil(account)
 }
