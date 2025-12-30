@@ -21,7 +21,7 @@ type Accounts struct {
 	Accounts []AccountData `json:"accounts"`
 }
 
-func LoadAuthRepository(fileName string) (auth.HttpAuthenticator, error) {
+func LoadAuthRepository(fileName string) (*auth.InMemoryAuthRepository, error) {
 	logger := logging.LogFromContext(context.Background())
 	data, err := os.ReadFile(fileName)
 	if err != nil {

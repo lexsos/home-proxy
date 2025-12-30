@@ -18,4 +18,5 @@ type Authenticator interface {
 	AuthByIp(ctx context.Context, ip string) (*Account, error)
 	AuthByPassword(ctx context.Context, login string, password string) (*Account, error)
 	GetByLogin(login string) (*Account, error)
+	Valid(user, password string) bool
 }

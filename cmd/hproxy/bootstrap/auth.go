@@ -9,7 +9,7 @@ import (
 	"github.com/lexsos/home-proxy/internal/loader"
 )
 
-func InitAuth(config *Config) (auth.HttpAuthenticator, error) {
+func InitAuth(config *Config) (*auth.InMemoryAuthRepository, error) {
 	log.Info("Creating authenticator")
 	if config.JsonAuth != "" {
 		auth, err := loader.LoadAuthRepository(config.JsonAuth)
