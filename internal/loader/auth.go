@@ -1,11 +1,13 @@
 package loader
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
 
 	"github.com/lexsos/home-proxy/internal/auth"
+	"github.com/lexsos/home-proxy/internal/utils/logging"
 )
 
 type AccountData struct {
@@ -20,6 +22,7 @@ type Accounts struct {
 }
 
 func LoadAuthRepository(fileName string) (auth.HttpAuthenticator, error) {
+	logger := logging.LogFromContext(context.Background())
 	data, err := os.ReadFile(fileName)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read config file: %w", err)
@@ -38,12 +41,14 @@ func LoadAuthRepository(fileName string) (auth.HttpAuthenticator, error) {
 			if err != nil {
 				return nil, fmt.Errorf("failed to add account: %w", err)
 			}
+			logger.Infof("Add account '%s' with password", account.Login)
 		}
 		if len(account.Ips) > 0 {
 			err := repo.AddWithIps(account.Login, account.ProfileSlug, account.Ips)
 			if err != nil {
 				return nil, fmt.Errorf("failed to add account: %w", err)
 			}
+			logger.Infof("Add account '%s' with ips", account.Login)
 		}
 	}
 	return repo, nil
