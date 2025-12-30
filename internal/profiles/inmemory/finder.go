@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/lexsos/home-proxy/internal/profiles"
+	"github.com/lexsos/home-proxy/internal/profiles/times"
 	"github.com/lexsos/home-proxy/internal/utils/logging"
 )
 
@@ -14,7 +15,7 @@ func (repo *InMemoryProfilesRepository) GetProfile(ctx context.Context, slug str
 	if !ok {
 		return nil, fmt.Errorf("Profile '%s' not found", slug)
 	}
-	current := profiles.NowTimeInLocation(profile.tz)
+	current := times.NowTimeInLocation(profile.tz)
 	for i, timeRange := range profile.timeRanges {
 		// Too early
 		if current.Time < timeRange.startAt {

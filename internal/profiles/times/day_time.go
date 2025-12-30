@@ -1,4 +1,4 @@
-package profiles
+package times
 
 import (
 	"fmt"
@@ -11,11 +11,6 @@ const (
 
 type DayTime uint32
 
-type WeekTime struct {
-	Time DayTime
-	Day  time.Weekday
-}
-
 func SecondsSinceMidnight(t time.Time) DayTime {
 	return DayTime(t.Hour()*3600 + t.Minute()*60 + t.Second())
 }
@@ -26,12 +21,4 @@ func ParseTime(strTime string) (DayTime, error) {
 		return 0, fmt.Errorf("fail parse '%s' as time: %w", strTime, err)
 	}
 	return SecondsSinceMidnight(start), nil
-}
-
-func NowTimeInLocation(location *time.Location) *WeekTime {
-	currentTime := time.Now().In(location)
-	return &WeekTime{
-		Time: SecondsSinceMidnight(currentTime),
-		Day:  currentTime.Weekday(),
-	}
 }

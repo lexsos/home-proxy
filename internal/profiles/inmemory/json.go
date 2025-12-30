@@ -9,6 +9,7 @@ import (
 	_ "time/tzdata"
 
 	"github.com/lexsos/home-proxy/internal/profiles"
+	"github.com/lexsos/home-proxy/internal/profiles/times"
 )
 
 type jsonTimeRange struct {
@@ -66,13 +67,13 @@ func NewProfilesRepositoryFronJson(fileName string) (*InMemoryProfilesRepository
 		var timeRanges []TimeRange
 		for i, jsonRange := range jsonProf.Ranges {
 			// Parse start time
-			startAt, err := profiles.ParseTime(jsonRange.StartAt)
+			startAt, err := times.ParseTime(jsonRange.StartAt)
 			if err != nil {
 				return nil, fmt.Errorf("failed to parse start_at '%s' for profile '%s' range %d: %w", jsonRange.StartAt, jsonProf.Slug, i, err)
 			}
 
 			// Parse end time
-			endAt, err := profiles.ParseTime(jsonRange.EndAt)
+			endAt, err := times.ParseTime(jsonRange.EndAt)
 			if err != nil {
 				return nil, fmt.Errorf("failed to parse end_at '%s' for profile '%s' range %d: %w", jsonRange.EndAt, jsonProf.Slug, i, err)
 			}
