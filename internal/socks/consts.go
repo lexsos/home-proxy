@@ -1,3 +1,5 @@
 package socks
 
-const profileField = "profile"
+const (
+	profileField = "profile"
+)

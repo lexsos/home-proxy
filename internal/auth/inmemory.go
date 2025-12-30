@@ -38,6 +38,9 @@ func (repo *InMemoryAuthRepository) AddWithIps(login string, profileSlug string,
 		if _, ok := repo.accountsByIp[ip]; ok {
 			return fmt.Errorf("ip '%s' already exists", ip)
 		}
+		if _, ok := repo.accountsByLogin[login]; ok {
+			return fmt.Errorf("login '%s' already exists", login)
+		}
 	}
 	for _, ip := range ips {
 		repo.accountsByIp[ip] = data
@@ -86,6 +89,17 @@ func (repo *InMemoryAuthRepository) AuthByIp(ctx context.Context, ip string) (*A
 	data, ok := repo.accountsByIp[ip]
 	if !ok {
 		logger.Debugf("Account for ip '%s' not found", ip)
+		return nil, nil
+	}
+	return &Account{
+		Login:       data.Login,
+		ProfileSlug: data.ProfileSlug,
+	}, nil
+}
+
+func (repo *InMemoryAuthRepository) GetByLogin(login string) (*Account, error) {
+	data, ok := repo.accountsByLogin[login]
+	if !ok {
 		return nil, nil
 	}
 	return &Account{

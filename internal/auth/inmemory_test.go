@@ -87,6 +87,14 @@ func (s *InMemoryAuthRepositoryTestSuit) TestGetUserNoAuth() {
 	s.Nil(account)
 }
 
+func (s *InMemoryAuthRepositoryTestSuit) TestGetByLogin() {
+	s.repo.AddWithPassword("testuser", "testprofile", "testpass")
+	account, err := s.repo.GetByLogin("testuser")
+	s.NoError(err)
+	s.NotNil(account)
+	s.Equal("testprofile", account.ProfileSlug)
+}
+
 func TestRunInMemoryAuthRepositoryTestSuit(t *testing.T) {
 	suite.Run(t, new(InMemoryAuthRepositoryTestSuit))
 }
