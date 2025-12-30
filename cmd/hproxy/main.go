@@ -36,16 +36,19 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	runHttp(config, httpServer)
-	runSocks(config, socksServer)
+
+	errChan := make(chan error, 2)
+	go runHttp(config, httpServer, errChan)
+	go runSocks(config, socksServer, errChan)
+	log.Fatal(<-errChan)
 }
 
-func runHttp(config *bootstrap.Config, server *http.Server) {
+func runHttp(config *bootstrap.Config, server *http.Server, errChan chan<- error) {
 	log.Infof("Starting HTTP/HTTPS proxy on port %s", config.ProxyAddr)
-	log.Fatal(server.ListenAndServe())
+	errChan <- server.ListenAndServe()
 }
 
-func runSocks(config *bootstrap.Config, server *socks5.Server) {
+func runSocks(config *bootstrap.Config, server *socks5.Server, errChan chan<- error) {
 	log.Infof("Starting SOCKS5 proxy on port %s", config.SocksAddr)
-	log.Fatal(server.ListenAndServe("tcp", config.SocksAddr))
+	errChan <- server.ListenAndServe("tcp", config.SocksAddr)
 }
