@@ -8,12 +8,12 @@ import (
 
 	"github.com/lexsos/home-proxy/internal/auth"
 	"github.com/lexsos/home-proxy/internal/filters"
-	"github.com/lexsos/home-proxy/internal/handlers"
+	"github.com/lexsos/home-proxy/internal/https"
 )
 
 func InitHttpServer(config *Config, authenticator auth.HttpAuthenticator, reqFilter *filters.RequestFilter) (*http.Server, error) {
 	log.Info("Creating http server")
-	httPproxyHandler := handlers.NewProxyHandler(authenticator, reqFilter)
+	httPproxyHandler := https.NewHttpProxyHandler(authenticator, reqFilter)
 	server := &http.Server{
 		Addr:         config.ProxyAddr,
 		Handler:      http.HandlerFunc(httPproxyHandler.Handler),

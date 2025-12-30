@@ -1,4 +1,4 @@
-package handlers
+package https
 
 import (
 	"net/http"
@@ -18,7 +18,7 @@ type HttpProxyHandler struct {
 	reqFilter     *filters.RequestFilter
 }
 
-func NewProxyHandler(authenticator auth.HttpAuthenticator, reqFilter *filters.RequestFilter) *HttpProxyHandler {
+func NewHttpProxyHandler(authenticator auth.HttpAuthenticator, reqFilter *filters.RequestFilter) *HttpProxyHandler {
 	return &HttpProxyHandler{
 		authenticator: authenticator,
 		reqFilter:     reqFilter,
