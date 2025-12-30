@@ -38,8 +38,12 @@ func main() {
 	}
 
 	errChan := make(chan error, 2)
-	go runHttp(config, httpServer, errChan)
-	go runSocks(config, socksServer, errChan)
+	if config.ProxyAddr != "" {
+		go runHttp(config, httpServer, errChan)
+	}
+	if config.SocksAddr != "" {
+		go runSocks(config, socksServer, errChan)
+	}
 	log.Fatal(<-errChan)
 }
 

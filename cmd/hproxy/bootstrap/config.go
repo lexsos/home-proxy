@@ -36,11 +36,8 @@ func ParseConfig() (*Config, error) {
 	jsonAuth := flag.String("auth-file", "", "Json file with auth data")
 	flag.Parse()
 
-	if *proxyAddr == "" {
-		return nil, errors.New("empty proxy address")
-	}
-	if *socksAddr == "" {
-		return nil, errors.New("empty socks address")
+	if *proxyAddr == "" && *socksAddr == "" {
+		return nil, errors.New("http or socks address is required")
 	}
 	if !availableLogFormats[LogFormat(*logFormat)] {
 		formats := slices.Collect(maps.Keys(availableLogFormats))
