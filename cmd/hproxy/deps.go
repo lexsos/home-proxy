@@ -12,6 +12,7 @@ type Deps struct {
 	config      *bootstrap.Config
 	httpServer  *http.Server
 	socksServer *socks5.Server
+	authSocksServer *socks5.Server
 }
 
 func NewDeps() (*Deps, error) {
@@ -42,11 +43,18 @@ func NewDeps() (*Deps, error) {
 		deps.httpServer = httpServer
 	}
 	if config.SocksAddr != "" {
-		socksServer, err := bootstrap.InitSocksServer(filter, authenticator)
+		socksServer, err := bootstrap.InitSocksServer(filter, authenticator, true)
 		if err != nil {
 			return nil, err
 		}
 		deps.socksServer = socksServer
+	}
+	if config.AuthSocksAddr != "" {
+		authSocksServer, err := bootstrap.InitSocksServer(filter, authenticator, false)
+		if err != nil {
+			return nil, err
+		}
+		deps.authSocksServer = authSocksServer
 	}
 	return deps, nil
 }
@@ -57,4 +65,8 @@ func (d *Deps) HasHttpServer() bool {
 
 func (d *Deps) HasSocksServer() bool {
 	return d.socksServer != nil
+}
+
+func (d *Deps) HasAuthSocksServer() bool {
+	return d.authSocksServer != nil
 }
